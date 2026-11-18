@@ -31,15 +31,10 @@ services:
   # ==========================================
   # Spring Boot Application
   # ==========================================
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-
-    image: sprintboot-api:latest
+  sprintboot-api:
+    image: ghcr.io/nguyenquephong13062003/db_jb_251229_ss10-backend-pthb260316:${IMAGE_TAG:-latest}
     container_name: sprintboot-api
-    restart: unless-stopped
-
+    restart: always
     ports:
       - "8080:8080"
 
