@@ -87,7 +87,7 @@ jobs:
 
             # 7. Khoi dong ung dung
             echo "[6/7] Khoi dong Docker Compose..."
-            docker compose pull SprintBoot_API_Practive_Session10
+            docker compose pull sprintboot-api
             docker compose up -d --remove-orphans
 
             # Kiem tra ket qua
