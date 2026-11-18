@@ -1,0 +1,69 @@
+
+services:
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+  db:
+    image: postgres:17
+    container_name: sprintboot-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: db_jb_251229_ss10
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-1234$}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d db_jb_251229_ss10"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - sprintboot-network
+
+  # ==========================================
+  # Spring Boot Application
+  # ==========================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: sprintboot-api:latest
+    container_name: sprintboot-api
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/db_jb_251229_ss10
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-1234$}
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    networks:
+      - sprintboot-network
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  postgres_data:
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  sprintboot-network:
+    driver: bridge
